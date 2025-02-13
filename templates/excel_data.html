@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+    <html lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Excel Data</title>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Finger+Paint&family=Hachi+Maru+Pop&display=swap" rel="stylesheet">        
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            body{
+                background-color: #f7f9fb;
+                font-family: 'cairo';
+                display: flex;
+               flex-direction: row-reverse;
+            }
+             .sidebar {
+                width: 250px;
+                background-color: #f8f9fa;
+                padding: 20px;
+                height: 100vh;
+                box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+                position: sticky;
+                top: 0;
+                 text-align: right;
+                 display: flex;
+                flex-direction: column;
+             }
+
+             .sidebar a {
+                display: block;
+                padding: 10px 15px;
+                text-decoration: none;
+                color: #333;
+                margin-bottom: 5px;
+                 border-radius: 8px;
+            }
+
+             .sidebar a:hover {
+               background-color: #e9ecef;
+            }
+
+            .content {
+                flex: 1;
+                padding: 20px;
+                margin-left: 20px;
+            }
+            .table-container {
+                max-height: 400px;
+                overflow-y: auto;
+                border-radius: 15px;
+                margin-bottom: 20px;
+                background-color: white;
+                  scrollbar-width: thin;
+                  scrollbar-color: transparent transparent; /* Chrome, Edge, Safari */
+                -ms-overflow-style: none; /* IE and Edge */
+            }
+
+             .table-container::-webkit-scrollbar {
+                width: 5px;
+              background-color: transparent;
+            }
+               .table-container:hover::-webkit-scrollbar {
+                width: 8px; /* Adjust the width of the scrollbar */
+                background-color: rgb(233, 233, 233);
+               }
+                .table-container::-webkit-scrollbar-thumb {
+                background-color: #aaa; /* Color of the scrollbar thumb */
+                border-radius: 10px;
+                }
+
+            .table-container .table{
+                margin-bottom:0;
+            }
+             table{
+                border: none;
+            }
+             .table td {
+                max-width: 200px;
+                overflow: auto;
+                white-space: nowrap;
+                border-bottom: 1px solid #dee2e6;
+                border-top: none;
+                 text-align: center;
+            }
+             .table th{
+                max-width: 200px;
+            }
+
+             .table thead th {
+                position: sticky;
+                top: 0;
+                background-color: #f8f9fa;
+                z-index: 1;
+                border: none;
+                 text-align: center;
+            }
+             #loading {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+            }
+
+             .loading-spinner {
+                border: 8px solid #f3f3f3;
+                border-top: 8px solid #3498db;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                animation: spin 1s linear infinite;
+            }
+
+             @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            button{
+                background: none;
+                border: none;
+            }
+            .table-con{
+                background-color: white;
+                box-shadow: 0 3px 16px rgba(142, 134, 171, .05);
+                padding: 20px;
+                border-radius: 15px;
+                margin-bottom: 40px;
+            }
+            button i{
+                color: rgb(190, 190, 190);
+                font-size: 15px;
+            }
+            button:focus {
+                outline: none;
+            }
+            h1{
+                 text-align: right;
+                 font-size: 1.8em;
+             }
+            p{
+                 text-align: right;
+             }
+              .filter-container {
+                  margin-bottom: 20px;
+              }
+            .file-upload-container {
+                 display: flex;
+                 justify-content: center;
+                 align-items: center;
+                 margin-bottom: 20px;
+            }
+            .file-upload-container input[type="file"] {
+                  margin-right: 10px;
+             }
+         .table-head{
+            display: flex;
+            margin-bottom: 15px;
+            justify-content: space-between;
+           }
+           .alert-container {
+              margin-top: 10px;
+           }
+           .alert-danger{
+                text-align: right;
+           }
+        </style>
+    </head>
+    <body dir="rtl">
+         {% include 'sidebar.html' %}
+        <div class="content">
+            <div class="container mt-5">
+                <div class="table-head">
+                    <h1>عرض بيانات اكسيل</h1>
+                      <form  method="post" enctype="multipart/form-data"  id="uploadForm">
+                            <div class="file-upload-container">
+                                <input type="file" name="file" id="fileInput" class="form-control-file" accept=".xlsx, .xls">
+                                 <button type="submit" class="btn btn-primary" onclick="return validateForm()">رفع</button>
+                            </div>
+                            <div id="alertContainer" class="alert-container">
+                              </div>
+                     </form>
+                </div>
+                {% if data %}
+                 <div class="table-con">
+                      <div class="filter-container mb-3">
+                        <input type="text" id="filterInput" class="form-control" placeholder="ابحث في أي عمود...">
+                     </div>
+                     <div class="table-container">
+                         <table class="table ">
+                            <thead>
+                                <tr>
+                                    {% for column in columns %}
+                                    <th>{{ column }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                             <tbody id="tableBody">
+                                    {% for row in data %}
+                                    <tr data-row-text="{{ ' '.join(row.values() | map('string')) | lower }}">
+                                        {% for column in columns %}
+                                         <td>{{ row[column] }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                           </table>
+                       </div>
+                   </div>
+                {% else %}
+                    <p>يرجى رفع ملف Excel لعرض البيانات.</p>
+                {% endif %}
+                 <div id="loading">
+                     <div class="loading-spinner"></div>
+                  </div>
+            </div>
+        </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+     <script>
+         let loadingDiv = document.getElementById('loading');
+         const tableBody = document.getElementById('tableBody');
+         const originalData = [...tableBody.querySelectorAll('tr')];
+         const filterInput = document.getElementById('filterInput');
+         let debounceTimer;
+         const fileInput = document.getElementById('fileInput');
+           const alertContainer = document.getElementById('alertContainer');
+         const uploadForm = document.getElementById('uploadForm')
+
+         if(filterInput){
+             filterInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(filterTable, 300); // Wait 300ms after the last input
+           });
+         }
+         
+          function validateForm() {
+               if (!fileInput.files || fileInput.files.length === 0) {
+                   alertContainer.innerHTML = '<div class="alert alert-danger" role="alert">يرجى اختيار ملف Excel.</div>';
+                   return false; // Prevent form submission
+                }
+              alertContainer.innerHTML = ''; // Clear any previous alerts
+                 return true;
+            }
+        function filterTable() {
+            const filterValue = filterInput.value.trim().toLowerCase();
+            tableBody.innerHTML = ''; // Clear the current table content
+
+           originalData.forEach(row => {
+             const rowText = row.getAttribute('data-row-text') || '';
+             if (rowText.includes(filterValue)) {
+                   tableBody.appendChild(row.cloneNode(true)); // Append the original row if it matches
+             }
+           });
+        }
+
+      </script>
+    </body>
+    </html>

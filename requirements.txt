@@ -1,0 +1,11 @@
+flask
+pandas
+openpyxl
+selenium
+webdriver_manager
+re
+threading
+time
+numpy
+subprocess
+configparser

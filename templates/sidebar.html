@@ -1,0 +1,38 @@
+<div class="sidebar">
+    <a href="{{ url_for('dashboard') }}" {% if current_page == 'dashboard' %} class="active" {% endif %}>
+        {% if current_page == 'dashboard' %} <span class="indicator-line"></span> {% endif %}
+        <i class="fas fa-tachometer-alt"></i> لوحة التحكم الرئيسية
+    </a>
+   <a href="{{ url_for('excel_data') }}" {% if current_page == 'excel_data' %} class="active" {% endif %}>
+        {% if current_page == 'excel_data' %} <span class="indicator-line"></span> {% endif %}
+        <i class="fas fa-file-excel"></i> عرض بيانات اكسيل
+     </a>
+   <a href="{{ url_for('run_scraper') }}" {% if current_page == 'run_scraper' %} class="active" {% endif %}>
+        {% if current_page == 'run_scraper' %} <span class="indicator-line"></span> {% endif %}
+        <i class="fas fa-cog"></i> تشغيل السكربت
+     </a>
+</div>
+
+<style>
+.sidebar a.active {
+    background-color: #e9ecef;
+     position: relative;
+}
+.sidebar a.active .indicator-line {
+    position: absolute;
+    right: 0;
+    top: 0;
+     bottom: 0;
+    width: 5px;
+    background-color:  #28a745;
+    border-radius: 8px 0 0 8px;
+   height: 100%;
+}
+.sidebar {
+  position: sticky;
+}
+.sidebar a i{
+    margin-left: 10px;
+    color: rgb(30, 48, 80);;
+}
+</style>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Finger+Paint&family=Hachi+Maru+Pop&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body{
+            background-color: #f7f9fb;
+            font-family: 'cairo';
+            display: flex; /* Enable flexbox */
+            flex-direction: row-reverse; /* Reverse row direction */
+        }
+
+        .sidebar {
+            width: 250px; /* Adjust as needed */
+            background-color: #f8f9fa;
+            padding: 20px;
+            height: 100vh; /* Ensure full height */
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+            position: sticky; /* Keep sidebar in place */
+            top: 0; /* Start from top */
+            text-align: right; /* Align content to right */
+            display: flex; /* Enable flexbox */
+            flex-direction: column; /* Vertical layout */
+            
+        }
+
+        .sidebar a {
+            display: block; /* Display links as blocks */
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+             margin-bottom: 5px;
+            border-radius: 8px;
+        }
+
+        .sidebar a:hover {
+            background-color: #e9ecef;
+        }
+
+        .content {
+            flex: 1; /* Expand to fill remaining space */
+            padding: 20px;
+            margin-left: 20px;
+        }
+         .indicators-container {
+             display: flex;
+            gap: 20px;
+        }
+
+        .indicator {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+             box-shadow: 0 3px 16px rgba(142, 134, 171, .05);
+
+        }
+
+        .indicator i {
+            margin-right: 5px; /* Space between icon and number */
+            font-size: 20px;
+            color: rgb(30, 48, 80);
+        }
+        .table-container {
+            max-height: 227px;
+            overflow-y: auto;
+            /* border: 1px solid #dee2e6; */
+            border-radius: 15px;
+            margin-bottom: 20px;
+            background-color: white;
+             scrollbar-width: thin;
+            scrollbar-color: transparent transparent; /* Chrome, Edge, Safari */
+             -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+          .table-container::-webkit-scrollbar {
+            width: 5px;
+           background-color: transparent;
+        }
+
+           .table-container:hover::-webkit-scrollbar {
+            width: 8px; /* Adjust the width of the scrollbar */
+             background-color: rgb(233, 233, 233);
+           }
+            .table-container::-webkit-scrollbar-thumb {
+            background-color: #aaa; /* Color of the scrollbar thumb */
+            border-radius: 10px;
+             }
+        
+        .table-container .table{
+            margin-bottom:0;
+        }
+
+        table{
+            border: none;
+        }
+        .table td {
+            max-width: 200px;
+            overflow: auto;
+            white-space: nowrap;
+            border-bottom: 1px solid #dee2e6;
+            border-top: none;
+            text-align: center;
+        }
+        
+        .table th{
+            max-width: 200px;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fa;
+            z-index: 1;
+            border: none;
+            text-align: center;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+         @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .done-status, .pending-status {
+            display: inline-block;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            margin-left: 5px;
+            color: white;
+        }
+
+         .done-status {
+            background-color: #28a745;
+         }
+
+         .pending-status {
+            background-color: #dc3545;
+         }
+
+         button{
+            background: none;
+            border: none;
+         }
+
+         .table-con{
+            background-color: white;
+            box-shadow: 0 3px 16px rgba(142, 134, 171, .05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+         }
+
+         button i{
+            color: rgb(190, 190, 190);
+            font-size: 15px;
+         }
+         button:focus {
+            outline: none;
+        }
+        h1{
+            text-align: right;
+            font-size: 1.8em;
+        }
+        p{
+            text-align: right;
+        }
+        .filter-container {
+          margin-bottom: 20px;
+       }
+       .table-head{
+            display: flex;
+            margin-bottom: 15px;
+            justify-content: space-between;
+       }
+        .loading-message{
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body dir="rtl">
+    {% include 'sidebar.html' %}
+    <div class="content">
+        <div class="container mt-5">
+
+            <div class="table-head">
+                <h1>طلبات الموقع</h1>
+             <div class="indicators-container">
+                   <div class="indicator">
+                       <span>{{ total_orders }}</span>
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div class="indicator">
+                        <span>{{ pending_orders }}</span>
+                        <i class="fa-duotone fa-solid fa-spinner"></i>
+                    </div>
+             </div>
+            </div>
+
+            <div class="table-con">
+                <div class="filter-container mb-3">
+                    <input type="text" id="filterInput" class="form-control" placeholder="ابحث في أي عمود...">
+                </div>
+                <div class="table-container">
+                    <table class="table ">
+                        <thead>
+                            <tr>
+                                {% for column in columns %}
+                                <th>{{ column }}</th>
+                                {% endfor %}
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            {% for row in data %}
+                            <tr data-row-index="{{ loop.index - 1 }}">
+                                {% for column in columns %}
+                                <td >{{ row[column] }}</td>
+                                {% endfor %}
+                                <td >
+                                    <button class="status-button" data-status="{{ row['الحالة'] }}" >
+                                        {% if row['الحالة'] == 'DONE' %}
+                                        <span class="done-status">DONE</span>
+                                        {% elif row['الحالة'] == 'PENDING' %}
+                                        <span class="pending-status">PENDING</span>
+                                        {% endif %}
+                                    </button>
+                                    <button class="delete-button">
+                                        <i class="fa fa-trash-alt""></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="table-con mt-5">  <!-- Added margin-top for spacing -->
+                <h1>طلبات ديل</h1>
+                {% if order2_data %}
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    {% for column in order2_columns %}
+                                        <th>{{ column }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody2">
+                                {% for row in order2_data %}
+                                    <tr data-row-index="{{ loop.index - 1 }}">
+                                        {% for column in order2_columns %}
+                                            <td>
+                                                {% if column == "الرابط" or column == "Link" %}
+                                                    <a href="{{ row[column] }}" target="_blank">{{ row[column] }}</a>
+                                                {% else %}
+                                                    {{ row[column] }}
+                                                {% endif %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>لا توجد بيانات من المصدر الثاني.</p>
+                {% endif %}
+            </div>
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <span id="loading-message">جارٍ التحميل...</span>
+            </div>
+            <div id="similarListings" class="mt-5">
+                <h1 >العقارات المشابهة</h1>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+      <script>
+        let loadingDiv = document.getElementById('loading');
+         let loadingMessage = document.getElementById('loading-message');
+        const tableBody = document.getElementById('tableBody');
+         const originalData = [...tableBody.querySelectorAll('tr')];
+        const filterInput = document.getElementById('filterInput');
+        
+         filterInput.addEventListener('input', filterTable);
+    
+        function showLoading(message = "جارٍ التحميل...") {
+            loadingDiv.style.display = 'flex';
+             loadingMessage.textContent = message;
+        }
+    
+        function hideLoading() {
+            loadingDiv.style.display = 'none';
+        }
+     function filterTable() {
+            const filterValue = filterInput.value.trim().toLowerCase();
+           tableBody.innerHTML = '';
+            originalData.forEach(row => {
+                 let match = false;
+                 const cells = row.querySelectorAll('td');
+                for (let i = 0; i < cells.length; i++) {
+                  const cellValue = cells[i].textContent.toLowerCase();
+                     if (cellValue.includes(filterValue)) {
+                        match = true;
+                         break;
+                     }
+                }
+                if (match) {
+                    tableBody.appendChild(row.cloneNode(true));
+                }
+            });
+       }
+        const table = document.querySelector('table');
+        const table2 = document.querySelector('#tableBody2')
+          table.addEventListener('click', function(event) {
+             if (event.target.closest('.status-button')) {
+                 const rowIndex = parseInt(event.target.closest('tr').dataset.rowIndex);
+                   toggleStatus(rowIndex);
+             }
+            if(event.target.closest('.delete-button')){
+                const rowIndex = parseInt(event.target.closest('tr').dataset.rowIndex);
+                  deleteRow(rowIndex);
+            }
+         });
+
+          table2.addEventListener('click', function(event) {
+            const rowIndex = parseInt(event.target.closest('tr').dataset.rowIndex);
+             handleRowClick(rowIndex, 'order2')
+          });
+        function toggleStatus(rowIndex) {
+             showLoading("جارٍ تغيير الحالة...");
+            fetch('/toggle_status', {
+                 method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                 body: JSON.stringify(rowIndex),
+             })
+            .then(response => response.json())
+             .then(data => {
+                hideLoading();
+                  const button = document.querySelector(`[data-row-index="${rowIndex}"] .status-button`);
+                if (data.status === 'DONE') {
+                    button.innerHTML = '<span class="done-status">DONE</span>';
+                 } else if (data.status === 'PENDING') {
+                   button.innerHTML = '<span class="pending-status">PENDING</span>';
+               }
+               button.setAttribute('data-status', data.status);
+            })
+            .catch(error => {
+                hideLoading();
+                  console.error('Error:', error);
+            });
+      }
+
+      function handleRowClick(rowIndex, source = 'order1') {
+         showLoading("جارٍ جلب البيانات...");
+          fetch(`/process_row?source=${source}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(rowIndex),
+           })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+               console.log('Similar Data:', data);
+                 displaySimilarData(data);
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error:', error);
+           });
+       }
+
+      function displaySimilarData(data) {
+         const similarListingsDiv = document.getElementById('similarListings');
+            similarListingsDiv.innerHTML = '<h1 >العقارات المشابهة</h1>';
+          if (data && data.length > 0) {
+                const tableCon = document.createElement('div');
+              tableCon.classList.add('table-con');
+                const tableContainer = document.createElement('div');
+               tableContainer.classList.add('table-container');
+                  const table = document.createElement('table');
+               table.classList.add('table');
+                const thead = document.createElement('thead');
+                 const headerRow = document.createElement('tr');
+               const columnNames = Object.keys(data[0]);
+                columnNames.forEach(key => {
+                  const th = document.createElement('th');
+                     th.textContent = key;
+                     headerRow.appendChild(th);
+                });
+               thead.appendChild(headerRow);
+               table.appendChild(thead);
+               const tbody = document.createElement('tbody');
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    columnNames.forEach(key => {
+                       const td = document.createElement('td');
+                       let text = row[key];
+                        if (key === "الرابط" || key === "Link") {
+                           text = `<a href="${row[key]}" target="_blank">${row[key]}</a>`
+                       }
+                       td.innerHTML = text;
+                        tr.appendChild(td);
+                   });
+                  tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                tableContainer.appendChild(table)
+               tableCon.appendChild(tableContainer);
+                similarListingsDiv.appendChild(tableCon);
+            } else {
+               similarListingsDiv.innerHTML += '<p>لا توجد عقارات مشابهة.</p>';
+           }
+       }
+
+      function deleteRow(rowIndex) {
+             showLoading("جارٍ حذف الطلب...");
+            if (confirm('هل أنت متأكد أنك تريد حذف هذا الطلب؟')) {
+             fetch('/delete_row', {
+                method: 'POST',
+                 headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rowIndex),
+              })
+            .then(response => response.json())
+                .then(data => {
+                    hideLoading();
+                  if (data.success) {
+                     location.reload();
+                    } else {
+                      alert('حدث خطأ أثناء الحذف.');
+                 }
+              })
+            .catch(error => {
+                hideLoading();
+                    console.error('Error:', error);
+                    alert('حدث خطأ أثناء الحذف.');
+             });
+          }else{
+               hideLoading();
+            }
+        }
+          const rows = document.querySelectorAll('#tableBody tr');
+          rows.forEach(row => {
+              row.addEventListener('click', function() {
+                const rowIndex =  parseInt(this.dataset.rowIndex);
+                  handleRowClick(rowIndex);
+              });
+          });
+   </script>
+</body>
+</html>

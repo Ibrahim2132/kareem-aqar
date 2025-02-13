@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Finger+Paint&family=Hachi+Maru+Pop&display=swap" rel="stylesheet">    
+    <title>Real Estate Form</title>
+
+    <style>
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'cairo';
+}
+
+body {
+    background: radial-gradient(circle at bottom left, #051939 0%, transparent 30%), 
+                radial-gradient(circle at top right, #051939 0%, transparent 30%);
+    background-color: #020a1a; 
+
+    height: 100vh;
+    padding: 0 5%;
+}
+
+  
+header{
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 2em 0 1em;
+}
+
+header h1{
+    font-size: 2rem;
+    color: white;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+}
+
+.category-selector {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    margin-bottom: 20px;
+}
+
+.category-button {
+    padding: 10px 15px;
+    background-color: #1e2a43;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.category-button:hover {
+    background-color: #3a4d6b;
+}
+
+.category-button.active {
+    background-color: #66afe9;
+    box-shadow: 0 0 5px rgba(102, 175, 233, 0.5);
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-width: 600px;
+    width: 100%;
+}
+
+.form-group {
+    border: 1px solid #ffffff;
+    padding: 5px 15px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    color: white;
+    font-size: 0.9em;
+}
+
+.form-group select, .form-group input {
+    width: calc(100% - 22px);
+    border: none;
+    background-color: #020a1a;
+    color: white;
+     cursor: pointer;
+}
+  .form-group input {
+     cursor: text;
+   }
+
+.form-group select:focus, .form-group input:focus {
+    outline: none;
+    /* border-color: #66afe9; */
+    /* box-shadow: 0 0 5px rgba(102, 175, 233, 0.5); */
+}
+
+.form-group label::after{
+  content: " *";
+   color: #ff6347;
+  font-size: 1em;
+}
+.main{
+    display: flex;
+    gap: 30px;
+}
+
+.submit-btn{
+    background-color: #1e2a43;
+    color: white;
+    max-width: 200px;
+    margin-top: 30px;
+    padding: 9px 0;
+    border-radius: 12px;
+    border: none;
+}
+.submit-btn:hover{
+    background-color: #3a4d6b;
+}
+.map-container{
+    width: 100%;
+}
+ .form-group input[type="number"]::-webkit-inner-spin-button,
+    .form-group input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+   .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        text-align: center;
+        color: #333;
+       
+    }
+   .popup button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+   }
+
+   .popup-overlay{
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="../static/assets/logo.svg" alt=""></div>
+        <div class="logo-name"><h1>REAL ESTATE <br> COMPANY</h1></div>
+    </header>
+
+<div dir="rtl" class="container">
+
+    <div class="category-selector">
+        <button class="category-button active" data-category="apartment">شقة</button>
+        <button class="category-button" data-category="villa">فيلا</button>
+        <button class="category-button" data-category="land">ارض</button>
+    </div>
+
+    <div class="main">
+        
+        <form class="form-container" id="form-container" method="post" action="/submit">
+                <!-- FORM -->
+        </form>
+        
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=..."width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+    </div>
+    <button class="submit-btn" type="submit" form="form-container">ارسال</button>
+    
+</div>    
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <p>تم حفظ البيانات بنجاح!</p>
+        <button id="closePopup">حسناً</button>
+    </div>
+<script>
+    const categoryButtons = document.querySelectorAll('.category-button');
+    const formContainer = document.getElementById('form-container');
+    const defaultForm = formContainer.innerHTML;
+    let citiesAndDistricts = {};
+    const popupOverlay = document.getElementById('popup-overlay');
+     const popup = document.getElementById('popup');
+        const closePopupButton = document.getElementById('closePopup');
+   
+    fetch('static/cities_districts.json')
+        .then(response => response.json())
+        .then(data => {
+            citiesAndDistricts = data;
+            handleCategoryChange('apartment');
+        })
+        .catch(error => console.error('Error loading cities and districts:', error));
+
+    const formConfigurations = {
+    apartment : `
+        <div class="form-group">
+           <label for="room">نوع العقد</label>
+            <select id="property_type" name="property_type" required oninvalid="this.setCustomValidity('من فضلك اختر نوع العقد.');" oninput="this.setCustomValidity('');">
+               <option value="شقة للإيجار">ايجار</option>
+               <option value="شقة للبيع">شراء</option>
+            </select>
+        </div>    
+        <div class="form-group">
+            <label for="name">الاسم</label>
+            <input type="text" id="name" name="name" placeholder="اسمك" required oninvalid="this.setCustomValidity('من فضلك ادخل اسمك.');" oninput="this.setCustomValidity('');">
+        </div>
+        <div class="form-group">
+            <label for="phone">رقم الجوال</label>
+            <input type="tel" id="phone" name="phone" placeholder="(05xxxxxxxx مثال)" required oninvalid="this.setCustomValidity('من فضلك ادخل رقم جوالك السعودي.');" oninput="this.setCustomValidity('');" pattern="05[0-9]{8}"  maxlength="10">
+        </div>
+       <div class="form-group">
+        <label for="city">المدينة</label>
+          <select id="city" name="city" required oninvalid="this.setCustomValidity('من فضلك اختر المدينة.');" oninput="this.setCustomValidity('');">
+              <option value="" disabled selected>اختر المدينة</option>
+             
+           </select>
+        </div>
+         <div class="form-group">
+           <label for="district">الحي</label>
+            <select id="district" name="district" required oninvalid="this.setCustomValidity('من فضلك اختر الحي.');" oninput="this.setCustomValidity('');">
+                 <option value="" disabled selected>اختر الحي</option>
+              </select>
+        </div>
+        <div class="form-group">
+           <label for="room">غرف النوم</label>
+            <select id="room" name="room" required oninvalid="this.setCustomValidity('من فضلك اختر عدد غرف النوم.');" oninput="this.setCustomValidity('');">
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="4">4</option>
+               <option value="5">5</option>
+               <option value="6">6</option>
+             </select>
+        </div>
+          <div class="form-group">
+               <label for="hall">الصالات</label>
+               <select id="hall" name="hall" required oninvalid="this.setCustomValidity('من فضلك اختر عدد الصالات.');" oninput="this.setCustomValidity('');">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+               </select>
+           </div>
+           <div class="form-group">
+             <label for="Toilets">دورات المياه</label>
+              <select id="Toilets" name="Toilets" required oninvalid="this.setCustomValidity('من فضلك اختر عدد دورات المياه.');" oninput="this.setCustomValidity('');">
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="4">4</option>
+              </select>
+            </div>
+           <div class="form-group">
+             <label for="area">المساحة (م²)</label>
+             <input type="number" id="area" name="area" placeholder="مساحة" required oninvalid="showAreaError(this)" oninput="this.setCustomValidity('');" min="50" max="500">
+          </div>
+          <div class="form-group">
+             <label for="price">السعر (ريال)</label>
+             <input type="number" id="price" name="price" placeholder="السعر" required oninvalid="this.setCustomValidity('من فضلك ادخل السعر.');" oninput="this.setCustomValidity('');">
+          </div>
+  `,
+      villa: `
+         <input type="hidden" name="property_type" value="فيلا للبيع">
+         <div class="form-group">
+            <label for="name">الاسم</label>
+            <input type="text" id="name" name="name" placeholder="اسمك" required oninvalid="this.setCustomValidity('من فضلك ادخل اسمك.');" oninput="this.setCustomValidity('');">
+          </div>
+          <div class="form-group">
+            <label for="phone">رقم الجوال</label>
+           <input type="tel" id="phone" name="phone" placeholder="رقم جوالك (مثال: 05xxxxxxxx)" required oninvalid="this.setCustomValidity('من فضلك ادخل رقم جوالك السعودي.');" oninput="this.setCustomValidity('');" pattern="05[0-9]{8}"  maxlength="10">
+         </div>
+
+        <div class="form-group">
+             <label for="city">المدينة</label>
+             <select id="city" name="city" required oninvalid="this.setCustomValidity('من فضلك اختر المدينة.');" oninput="this.setCustomValidity('');">
+                 <option value="" disabled selected>اختر المدينة</option>
+            </select>
+        </div>
+
+         <div class="form-group">
+            <label for="district">الحي</label>
+           <select id="district" name="district" required oninvalid="this.setCustomValidity('من فضلك اختر الحي.');" oninput="this.setCustomValidity('');">
+                <option value="" disabled selected>اختر الحي</option>
+           </select>
+        </div>
+
+        <div class="form-group">
+           <label for="room">غرف النوم</label>
+            <select id="room" name="room" required oninvalid="this.setCustomValidity('من فضلك اختر عدد غرف النوم.');" oninput="this.setCustomValidity('');">
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="4">4</option>
+               <option value="5">5</option>
+               <option value="6">6</option>
+               <option value="7">7</option>
+             </select>
+        </div>
+          <div class="form-group">
+               <label for="hall">الصالات</label>
+               <select id="hall" name="hall" required oninvalid="this.setCustomValidity('من فضلك اختر عدد الصالات.');" oninput="this.setCustomValidity('');">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+               </select>
+           </div>
+           <div class="form-group">
+             <label for="Toilets">دورات المياه</label>
+              <select id="Toilets" name="Toilets" required oninvalid="this.setCustomValidity('من فضلك اختر عدد دورات المياه.');" oninput="this.setCustomValidity('');">
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="4">4</option>
+               <option value="5">5</option>
+              </select>
+            </div>
+           <div class="form-group">
+             <label for="area">المساحة (م²)</label>
+             <input type="number" id="area" name="area" placeholder="مساحة" required oninvalid="showAreaError(this)" oninput="this.setCustomValidity('');" min="120" max="1200">
+          </div>
+          <div class="form-group">
+             <label for="price">السعر (ريال)</label>
+             <input type="number" id="price" name="price" placeholder="السعر" required oninvalid="this.setCustomValidity('من فضلك ادخل السعر.');" oninput="this.setCustomValidity('');">
+          </div>
+
+        `,
+        land: `
+        <input type="hidden" name="property_type" value="أرض للبيع">
+         <div class="form-group">
+            <label for="name">الاسم</label>
+            <input type="text" id="name" name="name" placeholder="اسمك" required oninvalid="this.setCustomValidity('من فضلك ادخل اسمك.');" oninput="this.setCustomValidity('');">
+         </div>
+         <div class="form-group">
+             <label for="phone">رقم الجوال</label>
+             <input type="tel" id="phone" name="phone" placeholder="رقم جوالك (مثال: 05xxxxxxxx)" required oninvalid="this.setCustomValidity('من فضلك ادخل رقم جوالك السعودي.');" oninput="this.setCustomValidity('');" pattern="05[0-9]{8}"  maxlength="10">
+        </div>
+
+            <div class="form-group">
+             <label for="city">المدينة</label>
+              <select id="city" name="city" required oninvalid="this.setCustomValidity('من فضلك اختر المدينة.');" oninput="this.setCustomValidity('');">
+                 <option value="" disabled selected>اختر المدينة</option>
+              
+           </select>
+        </div>
+        <div class="form-group">
+          <label for="district">الحي</label>
+           <select id="district" name="district" required oninvalid="this.setCustomValidity('من فضلك اختر الحي.');" oninput="this.setCustomValidity('');">
+                <option value="" disabled selected>اختر الحي</option>
+              </select>
+       </div>
+
+        <div class="form-group">
+          <label for="land-area">مساحة الارض (م2)</label>
+          <input type="number" id="land-area" name="area" placeholder="مساحة الارض" required oninvalid="showAreaError(this)" oninput="this.setCustomValidity('');" min="50" max="500">
+        </div>
+
+        <div class="form-group">
+          <label for="land-area">عرض الشارع (م2)</label>
+          <input type="number" id="street" name="street" placeholder="عرض الشارع" required oninvalid="showAreaError(this)" oninput="this.setCustomValidity('');" min="3" max="100">
+        </div>
+
+        <div class="form-group">
+          <label for="price">السعر (ريال)</label>
+          <input type="number" id="price" name="price" placeholder="السعر" required oninvalid="this.setCustomValidity('من فضلك ادخل السعر.');" oninput="this.setCustomValidity('');">
+        </div>
+         `
+    }
+
+    function handleCategoryChange(category){
+       if(formConfigurations[category]){
+         formContainer.innerHTML = formConfigurations[category]
+     }else{
+         formContainer.innerHTML = defaultForm;
+      }
+
+   categoryButtons.forEach(button => {
+        button.classList.remove('active');
+      });
+
+    const activeButton = document.querySelector(`.category-button[data-category='${category}']`)
+     activeButton.classList.add('active')
+
+      // Get references to the city and district select elements
+        const citySelect = formContainer.querySelector('#city');
+        const districtSelect = formContainer.querySelector('#district');
+
+        // Function to update districts based on selected city
+         function updateDistricts(selectedCity) {
+            districtSelect.innerHTML = '<option value="" disabled selected>اختر الحي</option>'; // Clear existing districts
+             if (citiesAndDistricts[selectedCity]) {
+                const districts = Array.isArray(citiesAndDistricts[selectedCity]) ? citiesAndDistricts[selectedCity] : Object.values(citiesAndDistricts[selectedCity]).flat();
+                  districts.forEach(district => {
+                      const option = document.createElement('option');
+                      option.value = district;
+                      option.textContent = district;
+                      districtSelect.appendChild(option);
+                });
+             }
+
+         }
+
+    // Initial districts update (for default selected city)
+        if(citySelect){
+            
+             // Add cities to the dropdown
+             if(citiesAndDistricts){
+                 citySelect.innerHTML = `<option value="" disabled selected>اختر المدينة</option>`;
+               Object.keys(citiesAndDistricts).forEach(city => {
+                    const option = document.createElement('option');
+                      option.value = city;
+                      option.textContent = city;
+                      citySelect.appendChild(option);
+                });
+               updateDistricts(citySelect.value);
+            }
+            
+        }
+
+
+    // Event listener for city select changes
+     if(citySelect){
+       citySelect.addEventListener('change', function() {
+         updateDistricts(this.value);
+       });
+     }
+
+
+  }
+  
+  function showAreaError(input) {
+    if (!input.value) {
+         input.setCustomValidity('من فضلك ادخل المساحة.'); // رسالة عند ترك الحقل فارغًا
+    } else if (input.value < 50) {
+        input.setCustomValidity('يجب أن تكون المساحة أكبر من أو تساوي 50.'); // رسالة عندما تكون القيمة أقل من 50
+    } else if (input.value > 500) {
+        input.setCustomValidity('يجب أن تكون المساحة أقل من أو تساوي 500.');// رسالة عندما تكون القيمة أكبر من 500
+    }
+}
+categoryButtons.forEach(button => {
+  button.addEventListener('click', function() {
+     const selectedCategory = this.getAttribute('data-category');
+     handleCategoryChange(selectedCategory)
+})
+});
+
+ document.getElementById('form-container').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        const formData = new FormData(this);
+
+        fetch('/submit', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.text())
+        .then(data => {
+          popupOverlay.style.display = 'block';
+          popup.style.display = 'block';
+        })
+        .catch(error => {
+             alert("حدث خطأ اثناء ارسال البيانات");
+          console.error('Error:', error);
+        });
+    });
+
+     closePopupButton.addEventListener('click', function() {
+          popupOverlay.style.display = 'none';
+            popup.style.display = 'none';
+        });
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'cairo';
+}
+
+body {
+    background: radial-gradient(circle at bottom left, #051939 0%, transparent 30%), 
+                radial-gradient(circle at top right, #051939 0%, transparent 30%);
+    background-color: #020a1a; 
+
+    height: 100vh;
+    padding: 0 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+  
+header{
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-top: 3rem;
+}
+
+header h1{
+    font-size: 2rem;
+    color: white;
+}  
+
+.mid{
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-grow: 1;
+    margin-top: 3rem;
+}
+
+.mid-content{
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.mid-content h1{
+    color: white;
+    font-size: 4rem;
+}
+.mid-content p{
+    color: #D7D7D7;
+    font-size: 1.5rem;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+.mid-pic{
+    max-width: 450px;
+}
+.mid-pic img{
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.mid-content button{
+    background-color: #051939;
+    color: white;
+    border: none;
+    font-size: 1.4rem;
+    padding: 8px 50px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: 'cairo';
+}
+
+.mid-content button:hover{
+    background-color: white;
+    color: #051939;
+}
+
+.social{
+    margin-bottom: 3rem;
+}
+.social img{
+    margin-right: 30px;
+    cursor: pointer;
+}
+/* 22222222222222222222222 */
+
+.container{
+    display: flex;
+    flex-direction: column;
+}
+
+.a1{
+    color: #FF7F50;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.a2{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row-reverse;
+    margin-bottom: 30px;
+}
+
+.a21 h3{
+    color: white;
+}
+
+.a22 button{
+    background-color: white;
+    color: #051939;
+    border: none;
+    font-size: 1.4rem;
+    padding: 8px 50px;
+    border-radius: 16px;
+    font-family: 'cairo';
+    cursor: pointer;
+}
+
+.a22 button:hover{
+    background-color: #051939;
+    color: white;
+}
+
+.steps {
+    display: flex;
+   justify-content: space-around;
+   align-items: stretch;
+   background-color: white;
+   border-radius: 10px;
+   margin-bottom: 50px;
+   box-shadow: 0 2px 5px rgba(0,0,0,0.1)
+
+}
+
+.step {
+   padding: 0 3% 3%;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   border-right: 1px solid #e0e0e0; /* إضافة حد أيمن */
+}
+
+.step:first-child {
+   border-right: none; /* إزالة الحد الأيمن للعنصر الأخير */
+}
+
+
+.step h2 {
+   font-size: 4em;
+   color: #e0e0e0;
+}
+
+.step img {
+   width: 50px;
+   height: 50px;
+   margin-bottom: 20px;
+   
+}
+
+.step h3 {
+   font-size: 1.5em;
+   color: #213360;
+   margin-bottom: 10px;
+    
+}
+
+.step p {
+   color: #555;
+   font-size: 1.1em;
+}
+
+.step:nth-child(2) img{
+   width: 35px;
+   height: 35px;
+   padding-top: 10px;
+}
+
+.stepA{
+    margin-top: -60px;
+}
+
