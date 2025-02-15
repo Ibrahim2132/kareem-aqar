@@ -403,10 +403,10 @@ def run_scraper():
                                         text=True)
             stdout, stderr = process.communicate()
 
-            # if process.returncode == 0:
-            #     output_message = "تم تشغيل السكربت بنجاح!"
-            # else:
-            #     output_message = "حدث خطأ أثناء تشغيل السكربت او ان اشتراكك في عقار انتهي"
+            if process.returncode == 0:
+                output_message = "تم تشغيل السكربت بنجاح!"
+            else:
+                output_message = "حدث خطأ أثناء تشغيل السكربت او ان اشتراكك في عقار انتهي"
 
         except Exception as e:
             output_message = "حدث خطأ غير متوقع او ان اشتراكك في عقار انتهي"
