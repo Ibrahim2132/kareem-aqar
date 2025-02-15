@@ -3,5 +3,6 @@ pandas
 openpyxl
 selenium
 webdriver_manager
+undetected-chromedriver
 numpy
 gunicorn
